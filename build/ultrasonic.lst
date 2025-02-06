@@ -1,0 +1,719 @@
+ARM GAS  /tmp/ccXOxZNK.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"ultrasonic.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.file 1 "Core/Src/ultrasonic.c"
+  20              		.section	.text.delay_us,"ax",%progbits
+  21              		.align	1
+  22              		.global	delay_us
+  23              		.syntax unified
+  24              		.thumb
+  25              		.thumb_func
+  27              	delay_us:
+  28              	.LVL0:
+  29              	.LFB220:
+   1:Core/Src/ultrasonic.c **** /**************************************************************************************************
+   2:Core/Src/ultrasonic.c **** **********************************    Author  : Ehab Magdy Abdullah                      **********
+   3:Core/Src/ultrasonic.c **** **********************************    Linkedin: https://www.linkedin.com/in/ehabmagdyy/  **********
+   4:Core/Src/ultrasonic.c **** **********************************    Youtube : https://www.youtube.com/@EhabMagdyy      **********
+   5:Core/Src/ultrasonic.c **** ***************************************************************************************************
+   6:Core/Src/ultrasonic.c **** 
+   7:Core/Src/ultrasonic.c **** #include "ultrasonic.h"
+   8:Core/Src/ultrasonic.c **** 
+   9:Core/Src/ultrasonic.c **** extern TIM_HandleTypeDef htim2;
+  10:Core/Src/ultrasonic.c **** #define HC_SR04_number 4
+  11:Core/Src/ultrasonic.c **** uint32_t start_time[HC_SR04_number] = {0,0,0,0};
+  12:Core/Src/ultrasonic.c **** float distance_cm[HC_SR04_number]	= {0.0,0.0,0.0,0.0};
+  13:Core/Src/ultrasonic.c **** uint8_t edge_state[HC_SR04_number]  = {0,0,0,0};
+  14:Core/Src/ultrasonic.c **** uint32_t end_time=0;
+  15:Core/Src/ultrasonic.c **** void delay_us(uint16_t us) 
+  16:Core/Src/ultrasonic.c **** {
+  30              		.loc 1 16 1 view -0
+  31              		.cfi_startproc
+  32              		@ args = 0, pretend = 0, frame = 0
+  33              		@ frame_needed = 0, uses_anonymous_args = 0
+  34              		@ link register save eliminated.
+  17:Core/Src/ultrasonic.c **** 	edge_state[0] = 0;
+  35              		.loc 1 17 2 view .LVU1
+  36              		.loc 1 17 16 is_stmt 0 view .LVU2
+  37 0000 064A     		ldr	r2, .L3
+  38 0002 0023     		movs	r3, #0
+  39 0004 1370     		strb	r3, [r2]
+  18:Core/Src/ultrasonic.c **** 	edge_state[1] = 0;
+  40              		.loc 1 18 2 is_stmt 1 view .LVU3
+ARM GAS  /tmp/ccXOxZNK.s 			page 2
+
+
+  41              		.loc 1 18 16 is_stmt 0 view .LVU4
+  42 0006 5370     		strb	r3, [r2, #1]
+  19:Core/Src/ultrasonic.c **** 	edge_state[2] = 0;
+  43              		.loc 1 19 2 is_stmt 1 view .LVU5
+  44              		.loc 1 19 16 is_stmt 0 view .LVU6
+  45 0008 9370     		strb	r3, [r2, #2]
+  20:Core/Src/ultrasonic.c **** 	edge_state[3] = 0;
+  46              		.loc 1 20 2 is_stmt 1 view .LVU7
+  47              		.loc 1 20 16 is_stmt 0 view .LVU8
+  48 000a D370     		strb	r3, [r2, #3]
+  21:Core/Src/ultrasonic.c **** 	__HAL_TIM_SET_COUNTER(&htim2, 0);
+  49              		.loc 1 21 2 is_stmt 1 view .LVU9
+  50 000c 044A     		ldr	r2, .L3+4
+  51 000e 1268     		ldr	r2, [r2]
+  52 0010 5362     		str	r3, [r2, #36]
+  22:Core/Src/ultrasonic.c **** 	while (__HAL_TIM_GET_COUNTER (&htim2) < us);
+  53              		.loc 1 22 2 view .LVU10
+  54              	.L2:
+  55              		.loc 1 22 40 discriminator 1 view .LVU11
+  56              		.loc 1 22 9 is_stmt 0 discriminator 1 view .LVU12
+  57 0012 536A     		ldr	r3, [r2, #36]
+  58              		.loc 1 22 40 discriminator 1 view .LVU13
+  59 0014 8342     		cmp	r3, r0
+  60 0016 FCD3     		bcc	.L2
+  23:Core/Src/ultrasonic.c **** }
+  61              		.loc 1 23 1 view .LVU14
+  62 0018 7047     		bx	lr
+  63              	.L4:
+  64 001a 00BF     		.align	2
+  65              	.L3:
+  66 001c 00000000 		.word	edge_state
+  67 0020 00000000 		.word	htim2
+  68              		.cfi_endproc
+  69              	.LFE220:
+  71              		.section	.text.Ultrasonic_Get_Distance,"ax",%progbits
+  72              		.align	1
+  73              		.global	Ultrasonic_Get_Distance
+  74              		.syntax unified
+  75              		.thumb
+  76              		.thumb_func
+  78              	Ultrasonic_Get_Distance:
+  79              	.LFB221:
+  24:Core/Src/ultrasonic.c **** 
+  25:Core/Src/ultrasonic.c **** void Ultrasonic_Get_Distance(void)
+  26:Core/Src/ultrasonic.c **** {
+  80              		.loc 1 26 1 is_stmt 1 view -0
+  81              		.cfi_startproc
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  84 0000 10B5     		push	{r4, lr}
+  85              	.LCFI0:
+  86              		.cfi_def_cfa_offset 8
+  87              		.cfi_offset 4, -8
+  88              		.cfi_offset 14, -4
+  27:Core/Src/ultrasonic.c **** 	/* Send Trigger Signal to the Ultrasonic Trigger Pin */
+  28:Core/Src/ultrasonic.c **** 	HAL_GPIO_WritePin(ULTRASONUC_TRIGGER_PORT, ULTRASONIC_TRIGGER_PIN, GPIO_PIN_SET);
+  89              		.loc 1 28 2 view .LVU16
+ARM GAS  /tmp/ccXOxZNK.s 			page 3
+
+
+  90 0002 114C     		ldr	r4, .L7
+  91 0004 0122     		movs	r2, #1
+  92 0006 4FF48061 		mov	r1, #1024
+  93 000a 2046     		mov	r0, r4
+  94 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+  95              	.LVL1:
+  29:Core/Src/ultrasonic.c **** 	delay_us(10);
+  96              		.loc 1 29 2 view .LVU17
+  97 0010 0A20     		movs	r0, #10
+  98 0012 FFF7FEFF 		bl	delay_us
+  99              	.LVL2:
+  30:Core/Src/ultrasonic.c **** 	HAL_GPIO_WritePin(ULTRASONUC_TRIGGER_PORT, ULTRASONIC_TRIGGER_PIN, GPIO_PIN_RESET);
+ 100              		.loc 1 30 2 view .LVU18
+ 101 0016 0022     		movs	r2, #0
+ 102 0018 4FF48061 		mov	r1, #1024
+ 103 001c 2046     		mov	r0, r4
+ 104 001e FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 105              	.LVL3:
+  31:Core/Src/ultrasonic.c **** 	__HAL_TIM_ENABLE_IT(&htim2, TIM_IT_CC1);
+ 106              		.loc 1 31 2 view .LVU19
+ 107 0022 0A4B     		ldr	r3, .L7+4
+ 108 0024 1B68     		ldr	r3, [r3]
+ 109 0026 DA68     		ldr	r2, [r3, #12]
+ 110 0028 42F00202 		orr	r2, r2, #2
+ 111 002c DA60     		str	r2, [r3, #12]
+  32:Core/Src/ultrasonic.c **** 	__HAL_TIM_ENABLE_IT(&htim2, TIM_IT_CC2);
+ 112              		.loc 1 32 2 view .LVU20
+ 113 002e DA68     		ldr	r2, [r3, #12]
+ 114 0030 42F00402 		orr	r2, r2, #4
+ 115 0034 DA60     		str	r2, [r3, #12]
+  33:Core/Src/ultrasonic.c **** 	__HAL_TIM_ENABLE_IT(&htim2, TIM_IT_CC3);
+ 116              		.loc 1 33 2 view .LVU21
+ 117 0036 DA68     		ldr	r2, [r3, #12]
+ 118 0038 42F00802 		orr	r2, r2, #8
+ 119 003c DA60     		str	r2, [r3, #12]
+  34:Core/Src/ultrasonic.c **** 	__HAL_TIM_ENABLE_IT(&htim2, TIM_IT_CC4);
+ 120              		.loc 1 34 2 view .LVU22
+ 121 003e DA68     		ldr	r2, [r3, #12]
+ 122 0040 42F01002 		orr	r2, r2, #16
+ 123 0044 DA60     		str	r2, [r3, #12]
+  35:Core/Src/ultrasonic.c **** }
+ 124              		.loc 1 35 1 is_stmt 0 view .LVU23
+ 125 0046 10BD     		pop	{r4, pc}
+ 126              	.L8:
+ 127              		.align	2
+ 128              	.L7:
+ 129 0048 00040240 		.word	1073873920
+ 130 004c 00000000 		.word	htim2
+ 131              		.cfi_endproc
+ 132              	.LFE221:
+ 134              		.global	__aeabi_f2d
+ 135              		.global	__aeabi_dmul
+ 136              		.global	__aeabi_d2f
+ 137              		.section	.text.HAL_TIM_IC_CaptureCallback,"ax",%progbits
+ 138              		.align	1
+ 139              		.global	HAL_TIM_IC_CaptureCallback
+ 140              		.syntax unified
+ARM GAS  /tmp/ccXOxZNK.s 			page 4
+
+
+ 141              		.thumb
+ 142              		.thumb_func
+ 144              	HAL_TIM_IC_CaptureCallback:
+ 145              	.LVL4:
+ 146              	.LFB222:
+  36:Core/Src/ultrasonic.c **** 
+  37:Core/Src/ultrasonic.c **** void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+  38:Core/Src/ultrasonic.c **** {	
+ 147              		.loc 1 38 1 is_stmt 1 view -0
+ 148              		.cfi_startproc
+ 149              		@ args = 0, pretend = 0, frame = 0
+ 150              		@ frame_needed = 0, uses_anonymous_args = 0
+ 151              		.loc 1 38 1 is_stmt 0 view .LVU25
+ 152 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 153              	.LCFI1:
+ 154              		.cfi_def_cfa_offset 24
+ 155              		.cfi_offset 3, -24
+ 156              		.cfi_offset 4, -20
+ 157              		.cfi_offset 5, -16
+ 158              		.cfi_offset 6, -12
+ 159              		.cfi_offset 7, -8
+ 160              		.cfi_offset 14, -4
+  39:Core/Src/ultrasonic.c **** 	uint8_t channel;
+ 161              		.loc 1 39 2 is_stmt 1 view .LVU26
+  40:Core/Src/ultrasonic.c **** 	uint32_t timer_channel;
+ 162              		.loc 1 40 2 view .LVU27
+  41:Core/Src/ultrasonic.c **** 	uint32_t IRQ_port;
+ 163              		.loc 1 41 2 view .LVU28
+  42:Core/Src/ultrasonic.c ****   	if (htim->Instance != TIM2) return;
+ 164              		.loc 1 42 4 view .LVU29
+ 165              		.loc 1 42 12 is_stmt 0 view .LVU30
+ 166 0002 0368     		ldr	r3, [r0]
+ 167              		.loc 1 42 7 view .LVU31
+ 168 0004 B3F1804F 		cmp	r3, #1073741824
+ 169 0008 00D0     		beq	.L35
+ 170              	.LVL5:
+ 171              	.L9:
+  43:Core/Src/ultrasonic.c **** 	
+  44:Core/Src/ultrasonic.c ****   	// Xác định kênh
+  45:Core/Src/ultrasonic.c ****   	switch (htim->Channel) {
+  46:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_1: {channel = 0; timer_channel = TIM_CHANNEL_1; 	IRQ_port = TIM_IT
+  47:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_2: {channel = 1; timer_channel = TIM_CHANNEL_2; 	IRQ_port = TIM_IT
+  48:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_3: {channel = 2; timer_channel = TIM_CHANNEL_3; 	IRQ_port = TIM_IT
+  49:Core/Src/ultrasonic.c **** 	  case HAL_TIM_ACTIVE_CHANNEL_4: {channel = 3; timer_channel = TIM_CHANNEL_4; 	IRQ_port = TIM_IT_C
+  50:Core/Src/ultrasonic.c ****   	  default: return;
+  51:Core/Src/ultrasonic.c ****   	}
+  52:Core/Src/ultrasonic.c **** 
+  53:Core/Src/ultrasonic.c ****   	// Kiểm tra cạnh Rising/Falling
+  54:Core/Src/ultrasonic.c ****   	if (edge_state[channel] == 0) {
+  55:Core/Src/ultrasonic.c ****   		// Rising Edge: Lưu thời điểm bắt đầu
+  56:Core/Src/ultrasonic.c ****   		start_time[channel] = HAL_TIM_ReadCapturedValue(htim, timer_channel);
+  57:Core/Src/ultrasonic.c ****   		// Chuyển sang bắt Falling Edge
+  58:Core/Src/ultrasonic.c **** 		edge_state[channel] = 1;
+  59:Core/Src/ultrasonic.c **** 		__HAL_TIM_SET_CAPTUREPOLARITY(htim, timer_channel, TIM_INPUTCHANNELPOLARITY_FALLING);
+  60:Core/Src/ultrasonic.c ****   	} else {
+  61:Core/Src/ultrasonic.c ****   	  	// Falling Edge: Tính khoảng cách
+  62:Core/Src/ultrasonic.c ****   	  	end_time = HAL_TIM_ReadCapturedValue(htim, timer_channel);
+ARM GAS  /tmp/ccXOxZNK.s 			page 5
+
+
+  63:Core/Src/ultrasonic.c ****   	  	uint32_t pulse_width = end_time - start_time[channel];
+  64:Core/Src/ultrasonic.c ****   	  	distance_cm[channel] =(float)pulse_width * 0.0343 / 2;
+  65:Core/Src/ultrasonic.c ****   	  	// Chuyển lại về Rising Edge
+  66:Core/Src/ultrasonic.c **** 		edge_state[channel] = 0;
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_SET_CAPTUREPOLARITY(htim, timer_channel, TIM_INPUTCHANNELPOLARITY_RISING);
+  68:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+  69:Core/Src/ultrasonic.c **** 	}
+  70:Core/Src/ultrasonic.c **** }
+ 172              		.loc 1 70 1 view .LVU32
+ 173 000a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 174              	.LVL6:
+ 175              	.L35:
+ 176              		.loc 1 70 1 view .LVU33
+ 177 000c 0446     		mov	r4, r0
+  45:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_1: {channel = 0; timer_channel = TIM_CHANNEL_1; 	IRQ_port = TIM_IT
+ 178              		.loc 1 45 4 is_stmt 1 view .LVU34
+  45:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_1: {channel = 0; timer_channel = TIM_CHANNEL_1; 	IRQ_port = TIM_IT
+ 179              		.loc 1 45 16 is_stmt 0 view .LVU35
+ 180 000e 037F     		ldrb	r3, [r0, #28]	@ zero_extendqisi2
+  45:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_1: {channel = 0; timer_channel = TIM_CHANNEL_1; 	IRQ_port = TIM_IT
+ 181              		.loc 1 45 4 view .LVU36
+ 182 0010 013B     		subs	r3, r3, #1
+ 183 0012 072B     		cmp	r3, #7
+ 184 0014 F9D8     		bhi	.L9
+ 185 0016 01A2     		adr	r2, .L12
+ 186 0018 52F823F0 		ldr	pc, [r2, r3, lsl #2]
+ 187              		.p2align 2
+ 188              	.L12:
+ 189 001c 3D000000 		.word	.L15+1
+ 190 0020 89000000 		.word	.L32+1
+ 191 0024 0B000000 		.word	.L9+1
+ 192 0028 45000000 		.word	.L13+1
+ 193 002c 0B000000 		.word	.L9+1
+ 194 0030 0B000000 		.word	.L9+1
+ 195 0034 0B000000 		.word	.L9+1
+ 196 0038 81000000 		.word	.L11+1
+ 197              		.p2align 1
+ 198              	.L15:
+  45:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_1: {channel = 0; timer_channel = TIM_CHANNEL_1; 	IRQ_port = TIM_IT
+ 199              		.loc 1 45 4 view .LVU37
+ 200 003c 0227     		movs	r7, #2
+ 201 003e 0025     		movs	r5, #0
+ 202 0040 2E46     		mov	r6, r5
+ 203 0042 02E0     		b	.L14
+ 204              	.L13:
+  48:Core/Src/ultrasonic.c **** 	  case HAL_TIM_ACTIVE_CHANNEL_4: {channel = 3; timer_channel = TIM_CHANNEL_4; 	IRQ_port = TIM_IT_C
+ 205              		.loc 1 48 38 is_stmt 1 view .LVU38
+ 206              	.LVL7:
+  48:Core/Src/ultrasonic.c **** 	  case HAL_TIM_ACTIVE_CHANNEL_4: {channel = 3; timer_channel = TIM_CHANNEL_4; 	IRQ_port = TIM_IT_C
+ 207              		.loc 1 48 51 view .LVU39
+  48:Core/Src/ultrasonic.c **** 	  case HAL_TIM_ACTIVE_CHANNEL_4: {channel = 3; timer_channel = TIM_CHANNEL_4; 	IRQ_port = TIM_IT_C
+ 208              		.loc 1 48 83 view .LVU40
+  48:Core/Src/ultrasonic.c **** 	  case HAL_TIM_ACTIVE_CHANNEL_4: {channel = 3; timer_channel = TIM_CHANNEL_4; 	IRQ_port = TIM_IT_C
+ 209              		.loc 1 48 106 view .LVU41
+  48:Core/Src/ultrasonic.c **** 	  case HAL_TIM_ACTIVE_CHANNEL_4: {channel = 3; timer_channel = TIM_CHANNEL_4; 	IRQ_port = TIM_IT_C
+ 210              		.loc 1 48 92 is_stmt 0 view .LVU42
+ 211 0044 0827     		movs	r7, #8
+ARM GAS  /tmp/ccXOxZNK.s 			page 6
+
+
+  48:Core/Src/ultrasonic.c **** 	  case HAL_TIM_ACTIVE_CHANNEL_4: {channel = 3; timer_channel = TIM_CHANNEL_4; 	IRQ_port = TIM_IT_C
+ 212              		.loc 1 48 65 view .LVU43
+ 213 0046 3D46     		mov	r5, r7
+  48:Core/Src/ultrasonic.c **** 	  case HAL_TIM_ACTIVE_CHANNEL_4: {channel = 3; timer_channel = TIM_CHANNEL_4; 	IRQ_port = TIM_IT_C
+ 214              		.loc 1 48 46 view .LVU44
+ 215 0048 0226     		movs	r6, #2
+ 216              	.LVL8:
+ 217              	.L14:
+  54:Core/Src/ultrasonic.c ****   		// Rising Edge: Lưu thời điểm bắt đầu
+ 218              		.loc 1 54 4 is_stmt 1 view .LVU45
+  54:Core/Src/ultrasonic.c ****   		// Rising Edge: Lưu thời điểm bắt đầu
+ 219              		.loc 1 54 18 is_stmt 0 view .LVU46
+ 220 004a 574B     		ldr	r3, .L44+8
+ 221 004c 9B5D     		ldrb	r3, [r3, r6]	@ zero_extendqisi2
+  54:Core/Src/ultrasonic.c ****   		// Rising Edge: Lưu thời điểm bắt đầu
+ 222              		.loc 1 54 7 view .LVU47
+ 223 004e 002B     		cmp	r3, #0
+ 224 0050 4AD1     		bne	.L16
+  56:Core/Src/ultrasonic.c ****   		// Chuyển sang bắt Falling Edge
+ 225              		.loc 1 56 5 is_stmt 1 view .LVU48
+  56:Core/Src/ultrasonic.c ****   		// Chuyển sang bắt Falling Edge
+ 226              		.loc 1 56 27 is_stmt 0 view .LVU49
+ 227 0052 2946     		mov	r1, r5
+ 228 0054 2046     		mov	r0, r4
+ 229              	.LVL9:
+  56:Core/Src/ultrasonic.c ****   		// Chuyển sang bắt Falling Edge
+ 230              		.loc 1 56 27 view .LVU50
+ 231 0056 FFF7FEFF 		bl	HAL_TIM_ReadCapturedValue
+ 232              	.LVL10:
+  56:Core/Src/ultrasonic.c ****   		// Chuyển sang bắt Falling Edge
+ 233              		.loc 1 56 25 discriminator 1 view .LVU51
+ 234 005a 544B     		ldr	r3, .L44+12
+ 235 005c 43F82600 		str	r0, [r3, r6, lsl #2]
+  58:Core/Src/ultrasonic.c **** 		__HAL_TIM_SET_CAPTUREPOLARITY(htim, timer_channel, TIM_INPUTCHANNELPOLARITY_FALLING);
+ 236              		.loc 1 58 3 is_stmt 1 view .LVU52
+  58:Core/Src/ultrasonic.c **** 		__HAL_TIM_SET_CAPTUREPOLARITY(htim, timer_channel, TIM_INPUTCHANNELPOLARITY_FALLING);
+ 237              		.loc 1 58 23 is_stmt 0 view .LVU53
+ 238 0060 514B     		ldr	r3, .L44+8
+ 239 0062 0122     		movs	r2, #1
+ 240 0064 9A55     		strb	r2, [r3, r6]
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 241              		.loc 1 59 3 is_stmt 1 view .LVU54
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 242              		.loc 1 59 3 view .LVU55
+ 243 0066 9DB9     		cbnz	r5, .L17
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 244              		.loc 1 59 3 is_stmt 0 discriminator 1 view .LVU56
+ 245 0068 2268     		ldr	r2, [r4]
+ 246 006a 136A     		ldr	r3, [r2, #32]
+ 247 006c 23F00A03 		bic	r3, r3, #10
+ 248 0070 1362     		str	r3, [r2, #32]
+ 249              	.L18:
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 250              		.loc 1 59 3 is_stmt 1 discriminator 12 view .LVU57
+ 251 0072 1DBB     		cbnz	r5, .L21
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 252              		.loc 1 59 3 is_stmt 0 discriminator 13 view .LVU58
+ARM GAS  /tmp/ccXOxZNK.s 			page 7
+
+
+ 253 0074 2268     		ldr	r2, [r4]
+ 254 0076 136A     		ldr	r3, [r2, #32]
+ 255 0078 43F00203 		orr	r3, r3, #2
+ 256 007c 1362     		str	r3, [r2, #32]
+ 257 007e C4E7     		b	.L9
+ 258              	.LVL11:
+ 259              	.L11:
+  49:Core/Src/ultrasonic.c ****   	  default: return;
+ 260              		.loc 1 49 36 is_stmt 1 view .LVU59
+  49:Core/Src/ultrasonic.c ****   	  default: return;
+ 261              		.loc 1 49 49 view .LVU60
+  49:Core/Src/ultrasonic.c ****   	  default: return;
+ 262              		.loc 1 49 81 view .LVU61
+  49:Core/Src/ultrasonic.c ****   	  default: return;
+ 263              		.loc 1 49 104 view .LVU62
+  49:Core/Src/ultrasonic.c ****   	  default: return;
+ 264              		.loc 1 49 90 is_stmt 0 view .LVU63
+ 265 0080 1027     		movs	r7, #16
+  49:Core/Src/ultrasonic.c ****   	  default: return;
+ 266              		.loc 1 49 63 view .LVU64
+ 267 0082 0C25     		movs	r5, #12
+  49:Core/Src/ultrasonic.c ****   	  default: return;
+ 268              		.loc 1 49 44 view .LVU65
+ 269 0084 0326     		movs	r6, #3
+  49:Core/Src/ultrasonic.c ****   	  default: return;
+ 270              		.loc 1 49 104 view .LVU66
+ 271 0086 E0E7     		b	.L14
+ 272              	.LVL12:
+ 273              	.L32:
+  47:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_3: {channel = 2; timer_channel = TIM_CHANNEL_3; 	IRQ_port = TIM_IT
+ 274              		.loc 1 47 92 view .LVU67
+ 275 0088 0427     		movs	r7, #4
+  47:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_3: {channel = 2; timer_channel = TIM_CHANNEL_3; 	IRQ_port = TIM_IT
+ 276              		.loc 1 47 65 view .LVU68
+ 277 008a 3D46     		mov	r5, r7
+  47:Core/Src/ultrasonic.c ****   	  case HAL_TIM_ACTIVE_CHANNEL_3: {channel = 2; timer_channel = TIM_CHANNEL_3; 	IRQ_port = TIM_IT
+ 278              		.loc 1 47 46 view .LVU69
+ 279 008c 0126     		movs	r6, #1
+ 280 008e DCE7     		b	.L14
+ 281              	.LVL13:
+ 282              	.L17:
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 283              		.loc 1 59 3 discriminator 2 view .LVU70
+ 284 0090 042D     		cmp	r5, #4
+ 285 0092 07D0     		beq	.L36
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 286              		.loc 1 59 3 discriminator 5 view .LVU71
+ 287 0094 082D     		cmp	r5, #8
+ 288 0096 0BD0     		beq	.L37
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 289              		.loc 1 59 3 discriminator 8 view .LVU72
+ 290 0098 2268     		ldr	r2, [r4]
+ 291 009a 136A     		ldr	r3, [r2, #32]
+ 292 009c 23F42043 		bic	r3, r3, #40960
+ 293 00a0 1362     		str	r3, [r2, #32]
+ 294 00a2 E6E7     		b	.L18
+ 295              	.L36:
+ARM GAS  /tmp/ccXOxZNK.s 			page 8
+
+
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 296              		.loc 1 59 3 discriminator 4 view .LVU73
+ 297 00a4 2268     		ldr	r2, [r4]
+ 298 00a6 136A     		ldr	r3, [r2, #32]
+ 299 00a8 23F0A003 		bic	r3, r3, #160
+ 300 00ac 1362     		str	r3, [r2, #32]
+ 301 00ae E0E7     		b	.L18
+ 302              	.L37:
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 303              		.loc 1 59 3 discriminator 7 view .LVU74
+ 304 00b0 2268     		ldr	r2, [r4]
+ 305 00b2 136A     		ldr	r3, [r2, #32]
+ 306 00b4 23F42063 		bic	r3, r3, #2560
+ 307 00b8 1362     		str	r3, [r2, #32]
+ 308 00ba DAE7     		b	.L18
+ 309              	.L21:
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 310              		.loc 1 59 3 discriminator 14 view .LVU75
+ 311 00bc 042D     		cmp	r5, #4
+ 312 00be 07D0     		beq	.L38
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 313              		.loc 1 59 3 discriminator 17 view .LVU76
+ 314 00c0 082D     		cmp	r5, #8
+ 315 00c2 0BD0     		beq	.L39
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 316              		.loc 1 59 3 discriminator 20 view .LVU77
+ 317 00c4 2268     		ldr	r2, [r4]
+ 318 00c6 136A     		ldr	r3, [r2, #32]
+ 319 00c8 43F40053 		orr	r3, r3, #8192
+ 320 00cc 1362     		str	r3, [r2, #32]
+ 321 00ce 9CE7     		b	.L9
+ 322              	.L38:
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 323              		.loc 1 59 3 discriminator 16 view .LVU78
+ 324 00d0 2268     		ldr	r2, [r4]
+ 325 00d2 136A     		ldr	r3, [r2, #32]
+ 326 00d4 43F02003 		orr	r3, r3, #32
+ 327 00d8 1362     		str	r3, [r2, #32]
+ 328 00da 96E7     		b	.L9
+ 329              	.L39:
+  59:Core/Src/ultrasonic.c ****   	} else {
+ 330              		.loc 1 59 3 discriminator 19 view .LVU79
+ 331 00dc 2268     		ldr	r2, [r4]
+ 332 00de 136A     		ldr	r3, [r2, #32]
+ 333 00e0 43F40073 		orr	r3, r3, #512
+ 334 00e4 1362     		str	r3, [r2, #32]
+ 335 00e6 90E7     		b	.L9
+ 336              	.LVL14:
+ 337              	.L16:
+ 338              	.LBB2:
+  62:Core/Src/ultrasonic.c ****   	  	uint32_t pulse_width = end_time - start_time[channel];
+ 339              		.loc 1 62 7 is_stmt 1 view .LVU80
+  62:Core/Src/ultrasonic.c ****   	  	uint32_t pulse_width = end_time - start_time[channel];
+ 340              		.loc 1 62 18 is_stmt 0 view .LVU81
+ 341 00e8 2946     		mov	r1, r5
+ 342 00ea 2046     		mov	r0, r4
+ 343              	.LVL15:
+ARM GAS  /tmp/ccXOxZNK.s 			page 9
+
+
+  62:Core/Src/ultrasonic.c ****   	  	uint32_t pulse_width = end_time - start_time[channel];
+ 344              		.loc 1 62 18 view .LVU82
+ 345 00ec FFF7FEFF 		bl	HAL_TIM_ReadCapturedValue
+ 346              	.LVL16:
+  62:Core/Src/ultrasonic.c ****   	  	uint32_t pulse_width = end_time - start_time[channel];
+ 347              		.loc 1 62 16 discriminator 1 view .LVU83
+ 348 00f0 2F4B     		ldr	r3, .L44+16
+ 349 00f2 1860     		str	r0, [r3]
+  63:Core/Src/ultrasonic.c ****   	  	distance_cm[channel] =(float)pulse_width * 0.0343 / 2;
+ 350              		.loc 1 63 7 is_stmt 1 view .LVU84
+  63:Core/Src/ultrasonic.c ****   	  	distance_cm[channel] =(float)pulse_width * 0.0343 / 2;
+ 351              		.loc 1 63 51 is_stmt 0 view .LVU85
+ 352 00f4 2D4B     		ldr	r3, .L44+12
+ 353 00f6 53F82630 		ldr	r3, [r3, r6, lsl #2]
+  63:Core/Src/ultrasonic.c ****   	  	distance_cm[channel] =(float)pulse_width * 0.0343 / 2;
+ 354              		.loc 1 63 16 view .LVU86
+ 355 00fa C01A     		subs	r0, r0, r3
+ 356              	.LVL17:
+  64:Core/Src/ultrasonic.c ****   	  	// Chuyển lại về Rising Edge
+ 357              		.loc 1 64 7 is_stmt 1 view .LVU87
+  64:Core/Src/ultrasonic.c ****   	  	// Chuyển lại về Rising Edge
+ 358              		.loc 1 64 29 is_stmt 0 view .LVU88
+ 359 00fc 07EE900A 		vmov	s15, r0	@ int
+ 360 0100 F8EE677A 		vcvt.f32.u32	s15, s15
+ 361 0104 17EE900A 		vmov	r0, s15
+ 362              	.LVL18:
+  64:Core/Src/ultrasonic.c ****   	  	// Chuyển lại về Rising Edge
+ 363              		.loc 1 64 29 view .LVU89
+ 364 0108 FFF7FEFF 		bl	__aeabi_f2d
+ 365              	.LVL19:
+  64:Core/Src/ultrasonic.c ****   	  	// Chuyển lại về Rising Edge
+ 366              		.loc 1 64 48 view .LVU90
+ 367 010c 24A3     		adr	r3, .L44
+ 368 010e D3E90023 		ldrd	r2, [r3]
+ 369 0112 FFF7FEFF 		bl	__aeabi_dmul
+ 370              	.LVL20:
+  64:Core/Src/ultrasonic.c ****   	  	// Chuyển lại về Rising Edge
+ 371              		.loc 1 64 57 view .LVU91
+ 372 0116 0022     		movs	r2, #0
+ 373 0118 264B     		ldr	r3, .L44+20
+ 374 011a FFF7FEFF 		bl	__aeabi_dmul
+ 375              	.LVL21:
+ 376 011e FFF7FEFF 		bl	__aeabi_d2f
+ 377              	.LVL22:
+  64:Core/Src/ultrasonic.c ****   	  	// Chuyển lại về Rising Edge
+ 378              		.loc 1 64 28 view .LVU92
+ 379 0122 254B     		ldr	r3, .L44+24
+ 380 0124 03EB8603 		add	r3, r3, r6, lsl #2
+ 381 0128 1860     		str	r0, [r3]	@ float
+  66:Core/Src/ultrasonic.c **** 		__HAL_TIM_SET_CAPTUREPOLARITY(htim, timer_channel, TIM_INPUTCHANNELPOLARITY_RISING);
+ 382              		.loc 1 66 3 is_stmt 1 view .LVU93
+  66:Core/Src/ultrasonic.c **** 		__HAL_TIM_SET_CAPTUREPOLARITY(htim, timer_channel, TIM_INPUTCHANNELPOLARITY_RISING);
+ 383              		.loc 1 66 23 is_stmt 0 view .LVU94
+ 384 012a 1F4B     		ldr	r3, .L44+8
+ 385 012c 0022     		movs	r2, #0
+ 386 012e 9A55     		strb	r2, [r3, r6]
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ARM GAS  /tmp/ccXOxZNK.s 			page 10
+
+
+ 387              		.loc 1 67 3 is_stmt 1 view .LVU95
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 388              		.loc 1 67 3 view .LVU96
+ 389 0130 75B9     		cbnz	r5, .L24
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 390              		.loc 1 67 3 is_stmt 0 discriminator 1 view .LVU97
+ 391 0132 2268     		ldr	r2, [r4]
+ 392 0134 136A     		ldr	r3, [r2, #32]
+ 393 0136 23F00A03 		bic	r3, r3, #10
+ 394 013a 1362     		str	r3, [r2, #32]
+ 395              	.L25:
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 396              		.loc 1 67 3 is_stmt 1 discriminator 12 view .LVU98
+ 397 013c F5B9     		cbnz	r5, .L28
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 398              		.loc 1 67 3 is_stmt 0 discriminator 13 view .LVU99
+ 399 013e 2368     		ldr	r3, [r4]
+ 400 0140 1A6A     		ldr	r2, [r3, #32]
+ 401 0142 1A62     		str	r2, [r3, #32]
+ 402              	.L29:
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 403              		.loc 1 67 3 is_stmt 1 discriminator 24 view .LVU100
+  68:Core/Src/ultrasonic.c **** 	}
+ 404              		.loc 1 68 3 view .LVU101
+ 405 0144 2268     		ldr	r2, [r4]
+ 406 0146 D368     		ldr	r3, [r2, #12]
+ 407 0148 23EA0703 		bic	r3, r3, r7
+ 408 014c D360     		str	r3, [r2, #12]
+ 409 014e 5CE7     		b	.L9
+ 410              	.L24:
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 411              		.loc 1 67 3 is_stmt 0 discriminator 2 view .LVU102
+ 412 0150 042D     		cmp	r5, #4
+ 413 0152 07D0     		beq	.L40
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 414              		.loc 1 67 3 discriminator 5 view .LVU103
+ 415 0154 082D     		cmp	r5, #8
+ 416 0156 0BD0     		beq	.L41
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 417              		.loc 1 67 3 discriminator 8 view .LVU104
+ 418 0158 2268     		ldr	r2, [r4]
+ 419 015a 136A     		ldr	r3, [r2, #32]
+ 420 015c 23F42043 		bic	r3, r3, #40960
+ 421 0160 1362     		str	r3, [r2, #32]
+ 422 0162 EBE7     		b	.L25
+ 423              	.L40:
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 424              		.loc 1 67 3 discriminator 4 view .LVU105
+ 425 0164 2268     		ldr	r2, [r4]
+ 426 0166 136A     		ldr	r3, [r2, #32]
+ 427 0168 23F0A003 		bic	r3, r3, #160
+ 428 016c 1362     		str	r3, [r2, #32]
+ 429 016e E5E7     		b	.L25
+ 430              	.L41:
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 431              		.loc 1 67 3 discriminator 7 view .LVU106
+ 432 0170 2268     		ldr	r2, [r4]
+ARM GAS  /tmp/ccXOxZNK.s 			page 11
+
+
+ 433 0172 136A     		ldr	r3, [r2, #32]
+ 434 0174 23F42063 		bic	r3, r3, #2560
+ 435 0178 1362     		str	r3, [r2, #32]
+ 436 017a DFE7     		b	.L25
+ 437              	.L28:
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 438              		.loc 1 67 3 discriminator 14 view .LVU107
+ 439 017c 042D     		cmp	r5, #4
+ 440 017e 05D0     		beq	.L42
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 441              		.loc 1 67 3 discriminator 17 view .LVU108
+ 442 0180 082D     		cmp	r5, #8
+ 443 0182 07D0     		beq	.L43
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 444              		.loc 1 67 3 discriminator 20 view .LVU109
+ 445 0184 2368     		ldr	r3, [r4]
+ 446 0186 1A6A     		ldr	r2, [r3, #32]
+ 447 0188 1A62     		str	r2, [r3, #32]
+ 448 018a DBE7     		b	.L29
+ 449              	.L42:
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 450              		.loc 1 67 3 discriminator 16 view .LVU110
+ 451 018c 2368     		ldr	r3, [r4]
+ 452 018e 1A6A     		ldr	r2, [r3, #32]
+ 453 0190 1A62     		str	r2, [r3, #32]
+ 454 0192 D7E7     		b	.L29
+ 455              	.L43:
+  67:Core/Src/ultrasonic.c **** 		__HAL_TIM_DISABLE_IT(htim, IRQ_port);
+ 456              		.loc 1 67 3 discriminator 19 view .LVU111
+ 457 0194 2368     		ldr	r3, [r4]
+ 458 0196 1A6A     		ldr	r2, [r3, #32]
+ 459 0198 1A62     		str	r2, [r3, #32]
+ 460 019a D3E7     		b	.L29
+ 461              	.L45:
+ 462 019c AFF30080 		.align	3
+ 463              	.L44:
+ 464 01a0 006F8104 		.word	75591424
+ 465 01a4 C58FA13F 		.word	1067552709
+ 466 01a8 00000000 		.word	edge_state
+ 467 01ac 00000000 		.word	start_time
+ 468 01b0 00000000 		.word	end_time
+ 469 01b4 0000E03F 		.word	1071644672
+ 470 01b8 00000000 		.word	distance_cm
+ 471              	.LBE2:
+ 472              		.cfi_endproc
+ 473              	.LFE222:
+ 475              		.global	end_time
+ 476              		.section	.bss.end_time,"aw",%nobits
+ 477              		.align	2
+ 480              	end_time:
+ 481 0000 00000000 		.space	4
+ 482              		.global	edge_state
+ 483              		.section	.bss.edge_state,"aw",%nobits
+ 484              		.align	2
+ 487              	edge_state:
+ 488 0000 00000000 		.space	4
+ 489              		.global	distance_cm
+ARM GAS  /tmp/ccXOxZNK.s 			page 12
+
+
+ 490              		.section	.bss.distance_cm,"aw",%nobits
+ 491              		.align	2
+ 494              	distance_cm:
+ 495 0000 00000000 		.space	16
+ 495      00000000 
+ 495      00000000 
+ 495      00000000 
+ 496              		.global	start_time
+ 497              		.section	.bss.start_time,"aw",%nobits
+ 498              		.align	2
+ 501              	start_time:
+ 502 0000 00000000 		.space	16
+ 502      00000000 
+ 502      00000000 
+ 502      00000000 
+ 503              		.text
+ 504              	.Letext0:
+ 505              		.file 2 "/home/vanmanh/tool/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/arm-none-eabi/include
+ 506              		.file 3 "/home/vanmanh/tool/arm-gnu-toolchain-13.3.rel1-x86_64-arm-none-eabi/arm-none-eabi/include
+ 507              		.file 4 "Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h"
+ 508              		.file 5 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h"
+ 509              		.file 6 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h"
+ 510              		.file 7 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h"
+ 511              		.file 8 "Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h"
+ARM GAS  /tmp/ccXOxZNK.s 			page 13
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 ultrasonic.c
+     /tmp/ccXOxZNK.s:21     .text.delay_us:00000000 $t
+     /tmp/ccXOxZNK.s:27     .text.delay_us:00000000 delay_us
+     /tmp/ccXOxZNK.s:66     .text.delay_us:0000001c $d
+     /tmp/ccXOxZNK.s:487    .bss.edge_state:00000000 edge_state
+     /tmp/ccXOxZNK.s:72     .text.Ultrasonic_Get_Distance:00000000 $t
+     /tmp/ccXOxZNK.s:78     .text.Ultrasonic_Get_Distance:00000000 Ultrasonic_Get_Distance
+     /tmp/ccXOxZNK.s:129    .text.Ultrasonic_Get_Distance:00000048 $d
+     /tmp/ccXOxZNK.s:138    .text.HAL_TIM_IC_CaptureCallback:00000000 $t
+     /tmp/ccXOxZNK.s:144    .text.HAL_TIM_IC_CaptureCallback:00000000 HAL_TIM_IC_CaptureCallback
+     /tmp/ccXOxZNK.s:189    .text.HAL_TIM_IC_CaptureCallback:0000001c $d
+     /tmp/ccXOxZNK.s:197    .text.HAL_TIM_IC_CaptureCallback:0000003c $t
+     /tmp/ccXOxZNK.s:464    .text.HAL_TIM_IC_CaptureCallback:000001a0 $d
+     /tmp/ccXOxZNK.s:501    .bss.start_time:00000000 start_time
+     /tmp/ccXOxZNK.s:480    .bss.end_time:00000000 end_time
+     /tmp/ccXOxZNK.s:494    .bss.distance_cm:00000000 distance_cm
+     /tmp/ccXOxZNK.s:477    .bss.end_time:00000000 $d
+     /tmp/ccXOxZNK.s:484    .bss.edge_state:00000000 $d
+     /tmp/ccXOxZNK.s:491    .bss.distance_cm:00000000 $d
+     /tmp/ccXOxZNK.s:498    .bss.start_time:00000000 $d
+
+UNDEFINED SYMBOLS
+htim2
+HAL_GPIO_WritePin
+__aeabi_f2d
+__aeabi_dmul
+__aeabi_d2f
+HAL_TIM_ReadCapturedValue

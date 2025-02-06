@@ -31,7 +31,9 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "motor_dc.h"
+#include "mpu6050.h"
+#include "ultrasonic.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
