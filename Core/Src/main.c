@@ -51,8 +51,8 @@ TIM_HandleTypeDef htim4;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
-extern float distance[3];
-extern uint8_t status[3];
+extern float distance[4];
+extern uint8_t status[4];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -126,12 +126,12 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    Ultrasonic_Get_Distance();
-    MPU6050_Read_All(&hi2c1, &MPU6050_Data);
+    // Ultrasonic_Get_Distance();
+    // MPU6050_Read_All(&hi2c1, &MPU6050_Data);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_Delay(100);
+    
   }
   /* USER CODE END 3 */
 }
