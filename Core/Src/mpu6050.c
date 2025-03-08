@@ -165,25 +165,36 @@ void MPU6050_Read_All(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct)
 {
 	uint8_t Rec_Data[14];
 //	uint8_t set_gyro_angles = 0;
-	    // Read 14 BYTES of data starting from ACCEL_XOUT_H register
-	    HAL_I2C_Mem_Read(I2Cx, MPU6050_ADDR, ACCEL_XOUT_H_REG, 1, Rec_Data, 14, i2c_timeout);
+	// Read 14 BYTES of data starting from ACCEL_XOUT_H register
+	HAL_I2C_Mem_Read(I2Cx, MPU6050_ADDR, ACCEL_XOUT_H_REG, 1, Rec_Data, 14, i2c_timeout);
 
-	    DataStruct->Accel_X_RAW= (int16_t)(Rec_Data[0] << 8 | Rec_Data[1]);
-	    DataStruct->Accel_Y_RAW= (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
-	    DataStruct->Accel_Z_RAW= (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
-	    DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[8] << 8 | Rec_Data[9]);
-	    DataStruct->Gyro_Y_RAW = (int16_t)(Rec_Data[10]<< 8 | Rec_Data[11]);
-	    DataStruct->Gyro_Z_RAW = (int16_t)(Rec_Data[12]<< 8 | Rec_Data[13]);
+	DataStruct->Accel_X_RAW= (int16_t)(Rec_Data[0] << 8 | Rec_Data[1]);
+	DataStruct->Accel_Y_RAW= (int16_t)(Rec_Data[2] << 8 | Rec_Data[3]);
+	DataStruct->Accel_Z_RAW= (int16_t)(Rec_Data[4] << 8 | Rec_Data[5]);
+	DataStruct->Gyro_X_RAW = (int16_t)(Rec_Data[8] << 8 | Rec_Data[9]);
+	DataStruct->Gyro_Y_RAW = (int16_t)(Rec_Data[10]<< 8 | Rec_Data[11]);
+	DataStruct->Gyro_Z_RAW = (int16_t)(Rec_Data[12]<< 8 | Rec_Data[13]);
 
-//	    DataStruct->Ax = (float)DataStruct->Accel_X_RAW / 1.0;
-//	    DataStruct->Ay = (float)DataStruct->Accel_Y_RAW / 1.0;
-//	    DataStruct->Az = (float)DataStruct->Accel_Z_RAW / 1.0;
-//	    DataStruct->Gx = (float)DataStruct->Gyro_X_RAW / 1.0;
-//	    DataStruct->Gy = (float)DataStruct->Gyro_Y_RAW / 1.0;
-//	    DataStruct->Gz = (float)DataStruct->Gyro_Z_RAW / 1.0;
-	    DataStruct->KalmanAngleX = Kalman_getAngle(&KalmanX, (float)DataStruct->Accel_X_RAW ,(float)DataStruct->Accel_X_RAW/4200, 0.01);
-	    DataStruct->KalmanAngleY = Kalman_getAngle(&KalmanY, (float)DataStruct->Accel_Y_RAW ,(float)DataStruct->Accel_Y_RAW/4200, 0.01);
-	    DataStruct->KalmanAngleZ = Kalman_getAngle(&KalmanZ, (float)DataStruct->Accel_Z_RAW ,(float)DataStruct->Accel_Z_RAW/4200, 0.01);
+//	DataStruct->Ax = (float)DataStruct->Accel_X_RAW / 1.0;
+//	DataStruct->Ay = (float)DataStruct->Accel_Y_RAW / 1.0;
+//	DataStruct->Az = (float)DataStruct->Accel_Z_RAW / 1.0;
+//	DataStruct->Gx = (float)DataStruct->Gyro_X_RAW / 1.0;
+//	DataStruct->Gy = (float)DataStruct->Gyro_Y_RAW / 1.0;
+//	DataStruct->Gz = (float)DataStruct->Gyro_Z_RAW / 1.0;
+	DataStruct->KalmanAngleX = Kalman_getAngle(&KalmanX, (float)DataStruct->Accel_X_RAW ,(float)DataStruct->Accel_X_RAW/4200, 0.01);
+	DataStruct->KalmanAngleY = Kalman_getAngle(&KalmanY, (float)DataStruct->Accel_Y_RAW ,(float)DataStruct->Accel_Y_RAW/4200, 0.01);
+	DataStruct->KalmanAngleZ = Kalman_getAngle(&KalmanZ, (float)DataStruct->Accel_Z_RAW ,(float)DataStruct->Accel_Z_RAW/4200, 0.01);
+}
+
+void Get_Accel_Angles(I2C_HandleTypeDef *I2Cx,MPU6050_Data_t *data, float *roll, float *pitch) {
+    MPU6050_Read_Accel(I2Cx, data);
+    // Scale factor (ví dụ: ±2g = 16384 LSB/g)
+    float accel_X = data->Accel_X_RAW / 16384.0f;
+    float accel_Y = data->Accel_Y_RAW / 16384.0f;
+    float accel_Z = data->Accel_Z_RAW / 16384.0f;
+    
+    *roll = atan2(accel_Y, accel_Z) * RAD_TO_DEG;
+    *pitch = atan2(-accel_X, sqrt(accel_Y*accel_Y + accel_Z*accel_Z)) * RAD_TO_DEG;
 }
 
 double Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double dt)
@@ -214,5 +225,12 @@ double Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double
     Kalman->P[1][1] -= K[1] * P01_temp;
     //B6: Xuất output
     return Kalman->angle;
+}
+
+void MPU6050_ResetProcedure(I2C_HandleTypeDef *I2Cx) {
+    // 1. Software reset
+    uint8_t reset_cmd[2] = {0x6B, 0x80};
+    HAL_I2C_Master_Transmit(I2Cx, MPU6050_ADDR, reset_cmd, 2, 100);
+    HAL_Delay(100);
 }
 //https://github.com/TKJElectronics/KalmanFilter

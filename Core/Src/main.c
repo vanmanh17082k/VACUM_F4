@@ -111,9 +111,15 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   setup_motor_dc();
+  HAL_Delay(500); // Delay 
   while(MPU6050_Data.MPU6050_address != 0x68){
-	    MPU6050_Data.MPU6050_address =MPU6050_Init(&hi2c1);
-	    HAL_Delay(50);
+    MPU6050_Data.MPU6050_address =MPU6050_Init(&hi2c1);
+    if(MPU6050_Data.MPU6050_address != 0x68){
+      __HAL_I2C_DISABLE(&hi2c1);
+      HAL_Delay(50);
+      __HAL_I2C_ENABLE(&hi2c1);
+      MPU6050_ResetProcedure(&hi2c1);
+    }
   }
 
   HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
@@ -127,7 +133,7 @@ int main(void)
   while (1)
   {
     // Ultrasonic_Get_Distance();
-    // MPU6050_Read_All(&hi2c1, &MPU6050_Data);
+    MPU6050_Read_All(&hi2c1, &MPU6050_Data);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

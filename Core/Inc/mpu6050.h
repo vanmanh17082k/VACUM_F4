@@ -64,4 +64,5 @@ double Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double
 
 uint8_t MPU6050_Init(I2C_HandleTypeDef *I2Cx);
 
+void MPU6050_ResetProcedure(I2C_HandleTypeDef *I2Cx);
 #endif /* INC_GY521_H_ */
