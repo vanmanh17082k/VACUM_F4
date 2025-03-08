@@ -49,6 +49,10 @@
 const uint16_t i2c_timeout = 10000;
 const double Accel_Z_corrector = 14418.0;
 uint32_t timer_mpu;
+float yaw = 0.0f;
+uint32_t prev_time = 0;
+float gyro_z_bias = 0.0f;
+
 
 Kalman_t KalmanX = {
     .Q_angle = 0.001f,
@@ -186,16 +190,47 @@ void MPU6050_Read_All(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct)
 	DataStruct->KalmanAngleZ = Kalman_getAngle(&KalmanZ, (float)DataStruct->Accel_Z_RAW ,(float)DataStruct->Accel_Z_RAW/4200, 0.01);
 }
 
-void Get_Accel_Angles(I2C_HandleTypeDef *I2Cx,MPU6050_Data_t *data, float *roll, float *pitch) {
-    MPU6050_Read_Accel(I2Cx, data);
-    // Scale factor (ví dụ: ±2g = 16384 LSB/g)
-    float accel_X = data->Accel_X_RAW / 16384.0f;
-    float accel_Y = data->Accel_Y_RAW / 16384.0f;
-    float accel_Z = data->Accel_Z_RAW / 16384.0f;
+void Get_XYZ_Angles(I2C_HandleTypeDef *I2Cx) {
+    MPU6050_t data;
+    MPU6050_Read_Gyro(I2Cx, &data);
     
-    *roll = atan2(accel_Y, accel_Z) * RAD_TO_DEG;
-    *pitch = atan2(-accel_X, sqrt(accel_Y*accel_Y + accel_Z*accel_Z)) * RAD_TO_DEG;
+    // Cacuate agle (độ/s)
+    float gyro_rate = (data.Gyro_Z_RAW - gyro_z_bias) / 131; // 131 LSB/(dps) cho thang ±250dps
+    
+    // Tính delta time
+    uint32_t current_time = HAL_GetTick();
+    float dt = (current_time - prev_time) * 0.001f; // Đổi sang giây
+    prev_time = current_time;
+    
+    // Tích phân góc
+    yaw += gyro_rate * dt;
 }
+
+
+void calibrate_gyro(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct) {
+    uint16_t time_cali = 50;
+	uint16_t cal_int = 0;
+    uint32_t ax_cal_tt = 0;
+    uint32_t ay_cal_tt = 0;
+	uint32_t gyro_roll_cal_tt = 0;
+	uint32_t gyro_pitch_cal_tt = 0;
+	uint32_t gyro_yaw_cal_tt = 0;
+    for (cal_int = 0; cal_int < time_cali ; cal_int ++) {                                  //Take 2000 readings for calibration.                  //Change the led status every 125 readings to indicate calibration.
+      MPU6050_Read_All(I2Cx, &DataStruct);                                                                //Read the gyro output.
+      ax_cal_tt += (float)DataStruct->Accel_X_RAW;
+      ay_cal_tt += (float)DataStruct->Accel_Y_RAW;
+      gyro_roll_cal_tt += (float)DataStruct->Gyro_X_RAW;                                                     //Ad roll value to gyro_roll_cal.
+      gyro_pitch_cal_tt += (float)DataStruct->Gyro_Y_RAW;                                                   //Ad pitch value to gyro_pitch_cal.
+      gyro_yaw_cal_tt += (float)DataStruct->Gyro_Z_RAW;                                                       //Ad yaw value to gyro_yaw_cal.
+    }                                                                  //Set output PB3 low.
+    //Now that we have 2000 measures, we need to devide by 2000 to get the average gyro offset.
+    DataStruct->error_Accel_X_RAW = ax_cal_tt  / time_cali;
+	DataStruct->error_Accel_Y_RAW = ay_cal_tt  / time_cali;
+	DataStruct->error_Gyro_X_RAW = gyro_roll_cal_tt / time_cali;              //Divide the roll total by 2000.
+    DataStruct->error_Gyro_Y_RAW = gyro_pitch_cal_tt / time_cali;             //Divide the pitch total by 2000.
+    DataStruct->error_Gyro_Z_RAW = gyro_yaw_cal_tt / time_cali;                //Divide the yaw total by 2000.
+}
+
 
 double Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double dt)
 {

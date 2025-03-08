@@ -133,7 +133,8 @@ int main(void)
   while (1)
   {
     // Ultrasonic_Get_Distance();
-    MPU6050_Read_All(&hi2c1, &MPU6050_Data);
+    // MPU6050_Read_All(&hi2c1, &MPU6050_Data);
+    Get_XYZ_Angles(&hi2c1);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

@@ -21,6 +21,14 @@ typedef struct
     int16_t Gyro_X_RAW;
     int16_t Gyro_Y_RAW;
     int16_t Gyro_Z_RAW;
+
+    int16_t error_Accel_X_RAW;
+    int16_t error_Accel_Y_RAW;
+    int16_t error_Accel_Z_RAW;
+    int16_t error_Gyro_X_RAW;
+    int16_t error_Gyro_Y_RAW;
+    int16_t error_Gyro_Z_RAW;
+
     float A_roll;
     float A_pitch;
     float A_yaw;
@@ -65,4 +73,8 @@ double Kalman_getAngle(Kalman_t *Kalman, double newAngle, double newRate, double
 uint8_t MPU6050_Init(I2C_HandleTypeDef *I2Cx);
 
 void MPU6050_ResetProcedure(I2C_HandleTypeDef *I2Cx);
+
+void Get_XYZ_Angles(I2C_HandleTypeDef *I2Cx);
+
+void calibrate_gyro(I2C_HandleTypeDef *I2Cx, MPU6050_t *DataStruct);
 #endif /* INC_GY521_H_ */
